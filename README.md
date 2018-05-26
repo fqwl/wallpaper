@@ -1,5 +1,1 @@
-# Git教程
-- feature-A
-- fix-B
-- feature-C
-- fix-D
+## 一个用于切换壁纸的程序
