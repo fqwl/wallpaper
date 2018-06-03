@@ -153,10 +153,8 @@ def deleteimg():
         message(2)
     else:
         files = img_path.pop(i)
-        #i -= 2
         set_wallpaper(1)
         send2trash(files)
-        #print("已删除   1 个文件")
 
 
 def printinfo(filename):
