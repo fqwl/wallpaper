@@ -13,7 +13,7 @@ def main():
     window.minsize(260,330)
     window.maxsize(260,330)
 
-    e_1,e_2 = input(window)
+    e_1,e_2 = entry(window)
     b_1,b_2,b_3,b_4,b_5= button(window)
 
     b_1.config(command = lambda: pretreatment(e_1))
@@ -26,7 +26,7 @@ def main():
     window.mainloop()
 
 
-def input(window):
+def entry(window):
     """生成输入框"""
     e1 = tk.Entry(window,show = None,width = 35)
     e1.pack()
