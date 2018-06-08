@@ -1,5 +1,6 @@
 import os
 import json
+import ctypes
 import win32api
 import win32con
 import win32gui
@@ -7,6 +8,15 @@ import tkinter as tk
 from send2trash import send2trash
 from tkinter import messagebox
 from tkinter.filedialog import askdirectory
+
+
+def killConsole():
+    """干掉/隐藏命令行界面"""
+    k32 = ctypes.windll.LoadLibrary("kernel32.dll")
+    whnd = k32.GetConsoleWindow()
+    if whnd != 0:
+        ctypes.windll.user32.ShowWindow(whnd, 0)
+        ctypes.windll.kernel32.CloseHandle(whnd)
 
 
 def deleteConfig():
@@ -150,7 +160,7 @@ def copyImg():
     if (i == 0) | (targetdir == ''):
         message(2)
     else:
-        os.popen("copy %s,%s " % (img_paths[i], targetdir))
+        os.popen('copy "%s",%s' % (img_paths[i], targetdir))
 
 
 def deleteImg():
@@ -170,6 +180,8 @@ def selectPath(n):
     elif n == 2:
         path_2.set(path_f)
 
+
+killConsole()
 
 window = tk.Tk()
 window.title("Wallpaper Filter")
