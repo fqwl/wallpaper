@@ -88,14 +88,8 @@ def printInfo(filename):
         t.insert('insert', filename)
 
 
-def message(n):
+def message(m):
     """弹窗"""
-    if n == 1:
-        m = '图片已处理完'
-    elif n == 2:
-        m = '请输入目录'
-    elif n == 3:
-        m = '已是第一张'
     tk.messagebox.showinfo(title='出错了', message=m)
 
 
@@ -121,22 +115,21 @@ def pretreatment():
                 i += 1
         printInfo('')
     else:
-        message(2)
+        message("请输入目录")
 
 
 def setWallpaper(n):
     """设置壁纸"""
     global i
     if i <= 0:
-        message(1)
+        message("图片已处理完")
     else:
         if n == 1:
             i -= 1
         elif n == 0:
             i += 1
-
         if i >= len(img_paths):
-            message(3)
+            message("已是第一张")
             i -= 1
         else:
             # 打开指定注册表路径
@@ -158,15 +151,34 @@ def copyImg():
     """复制图片"""
     targetdir = path_2.get()
     if (i == 0) | (targetdir == ''):
-        message(2)
+        message("请输入目录")
     else:
         os.popen('copy "%s",%s' % (img_paths[i], targetdir))
+
+
+def moveImg():
+    """移动图片"""
+    targetdir = path_2.get()
+    if(i == 0) | (targetdir == ''):
+        message("请输入目录")
+    elif os.path.exists(targetdir):
+        filepath = img_paths.pop(i)
+        o_path, filename = os.path.split(filepath)
+        targetpath = targetdir + "/" + filename
+        if os.path.isfile(targetpath):
+            message("目标目录有重名文件")
+        else:
+            setWallpaper(1)
+            os.rename(filepath, targetpath)
+
+    else:
+        message("目录不存在")
 
 
 def deleteImg():
     """删除图片"""
     if i == 0:
-        message(2)
+        message("请输入目录")
     else:
         files = img_paths.pop(i)
         setWallpaper(1)
@@ -185,8 +197,7 @@ killConsole()
 
 window = tk.Tk()
 window.title("Wallpaper Filter")
-window.geometry('280x395')
-window.resizable(False, False)
+
 
 path_1 = tk.StringVar()
 path_2 = tk.StringVar()
@@ -197,54 +208,52 @@ getConfig()
 
 
 tk.Entry(window,
-         textvariable=path_1,
-         width=29).grid(row=0, column=0, sticky='N' + 'W')
+         textvariable=path_1
+         ).grid(row=0, column=0, columnspan=3, sticky='N' + 'E' + 'S' + 'W')
 tk.Button(window,
           text='选择文件夹',
           command=lambda: selectPath(1)
-          ).grid(row=0, column=1, sticky='N' + 'E')
+          ).grid(row=0, column=3, sticky='N' + 'E' + 'S' + 'W')
 tk.Entry(window,
          textvariable=path_2,
-         width=29).grid(row=1, column=0, sticky='N' + 'W')
+         ).grid(row=1, column=0, columnspan=3, sticky='N' + 'E' + 'S' + 'W')
 tk.Button(window,
           text='选择文件夹',
           command=lambda: selectPath(2)
-          ).grid(row=1, column=1, sticky='N' + 'E')
+          ).grid(row=1, column=3, sticky='N' + 'E' + 'S' + 'W')
 tk.Button(window,
           text='预处理',
           command=pretreatment,
-          width=38,
-          height=2).grid(row=2, columnspan=2)
+          height=2).grid(row=2, columnspan=4, sticky='N' + 'E' + 'S' + 'W')
 tk.Button(window,
           text='上一张',
           command=lambda: setWallpaper(0),
-          width=38,
-          height=2).grid(row=3, columnspan=2)
+          height=2).grid(row=3, columnspan=4, sticky='N' + 'E' + 'S' + 'W')
 tk.Button(window,
           text='下一张',
           command=lambda: setWallpaper(1),
-          width=38,
-          height=2).grid(row=4, columnspan=2)
+          height=2).grid(row=4, columnspan=4, sticky='N' + 'E' + 'S' + 'W')
 tk.Button(window,
           text='复制当前壁纸',
           command=copyImg,
-          width=38,
-          height=2).grid(row=5, columnspan=2)
+          height=2).grid(row=5, columnspan=4, sticky='N' + 'E' + 'S' + 'W')
+tk.Button(window,
+          text='移动当前壁纸',
+          command=moveImg,
+          height=2).grid(row=6, columnspan=4, sticky='N' + 'E' + 'S' + 'W')
 tk.Button(window,
           text='删除当前壁纸',
           command=deleteImg,
-          width=38,
-          height=2).grid(row=6, columnspan=2)
+          height=2).grid(row=7, columnspan=4, sticky='N' + 'E' + 'S' + 'W')
 tk.Button(window,
           text='保存并退出',
           command=saveConfig,
-          width=38,
-          height=2).grid(row=7, columnspan=2)
+          height=2).grid(row=8, columnspan=4, sticky='N' + 'E' + 'S' + 'W')
 
-t = tk.Text(window, width=38, height=2)
-t.grid(row=8, columnspan=2)
-l = tk.Label(window, text=i, width=38)
-l.grid(row=9, columnspan=2)
+t = tk.Text(window, width=45, height=2)
+t.grid(row=9, columnspan=4)
+l = tk.Label(window, text=i,)
+l.grid(row=10, columnspan=4, sticky='N' + 'E' + 'S' + 'W')
 
 window.protocol("WM_DELETE_WINDOW", deleteConfig)
 
