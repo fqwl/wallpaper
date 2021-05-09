@@ -150,10 +150,7 @@ class Wallpapers:
                 if ext in '.jpg.png.bmp.jpeg.JPEG':
                     self.paths.append(filepath)
             self.i = 0
-            printInfo('')
-        elif os.path.exists(config_path):
-            self.i, self.paths = getConfig()
-            printInfo('')
+            setWallpaper(self.paths[self.i])
         else:
             message("请输入目录")
 
@@ -164,8 +161,9 @@ class Wallpapers:
         else:
             message("已是第一张")
             self.i = len(self.paths) - 1
-
-        setWallpaper(self.paths[self.i])
+        if len(self.paths) > 0:
+            setWallpaper(self.paths[self.i])
+            
 
     def next(self,):
         "将下一张图片设为壁纸"
@@ -174,7 +172,8 @@ class Wallpapers:
         else:
             message("已是最后一张")
             self.i = self.i + 1 - len(self.paths)
-        setWallpaper(self.paths[self.i])
+        if len(self.paths) > 0:
+            setWallpaper(self.paths[self.i])
 
     # NOTE:previous()和next()会跳过无法设置成壁纸的图片
     # MOD: 前一张和后一张可能出错 -> 索引位置未对齐
@@ -197,20 +196,25 @@ class Wallpapers:
             self.next()
             os.rename(fpath, targetpath)
             self.paths.remove(fpath)
+            self.i = self.i - 1
 
         else:
             message("目标目录未输入或不存在")
 
     def deleteimg(self,):
         """删除当前壁纸"""
-        fpath = self.paths[self.i]
-        self.next()
+        try:
+            fpath = self.paths[self.i]
+            self.next()
+        except IndexError:
+            message("请输入目录")
+            fpath = ''
         if os.path.isfile(fpath):
             send2trash(fpath)
             self.paths.remove(fpath)
+            self.i = self.i - 1
 
     # NOTE:moveimg()和deleteimg()应当在执行self.next()后再从self.paths中删除文件路径
-    # BUG: 删除路径后可能导致self.i超出范围s
 
     def saveconfig(self,):
         """存储配置信息并退出"""
@@ -242,6 +246,7 @@ config_path = getConfigpath()
 CONFIG = {"i": 0, "img_paths": []}
 
 wallpapers = Wallpapers(CONFIG)
+
 
 tk.Entry(window,
          textvariable=path_1
@@ -291,9 +296,10 @@ t.grid(row=9, columnspan=4)
 l = tk.Label(window, text=wallpapers.i,)
 l.grid(row=10, columnspan=4, sticky='N' + 'E' + 'S' + 'W')
 
-wallpapers.pretreatment()
-# TODO: 刚启动时不应弹窗
 
+if os.path.exists(config_path):
+    wallpapers.i, wallpapers.paths = getConfig()
+    printInfo(wallpapers.paths[wallpapers.i])
 window.protocol("WM_DELETE_WINDOW", deleteConfig)
 
 window.mainloop()
