@@ -1,23 +1,15 @@
-import os
 import json
+import os
 import shutil
+import tkinter as tk
+from tkinter import messagebox
+from tkinter.filedialog import askdirectory
 from typing import Union
-# import ctypes
+
 import win32api
 import win32con
 import win32gui
-import tkinter as tk
 from send2trash import send2trash
-from tkinter import messagebox
-from tkinter.filedialog import askdirectory
-
-# def killConsole():
-#     """干掉/隐藏命令行界面"""
-#     k32 = ctypes.windll.LoadLibrary("kernel32.dll")
-#     whnd = k32.GetConsoleWindow()
-#     if whnd != 0:
-#         ctypes.windll.user32.ShowWindow(whnd, 0)
-#         ctypes.windll.kernel32.CloseHandle(whnd)
 
 
 def deleteConfig():
@@ -83,17 +75,12 @@ def printInfo(filename):
         if t.get(1.0, tk.END) != '':
             t.delete(1.0, tk.END)
         t.insert('insert', filename)
-# BUG: 输出信息时可能不及时
 
 
 def message(msg: str):
     """弹窗"""
     tk.messagebox.showinfo(title='出错了', message=msg)
 
-
-# def fileext(filepath):
-#     (_, fileext) = os.path.splitext(filepath)
-#     return fileext
 def setWallpaper(fpath: str):
     """设置壁纸"""
     if os.path.isfile(fpath):
@@ -176,7 +163,6 @@ class Wallpapers:
             setWallpaper(self.paths[self.i])
 
     # NOTE:previous()和next()会跳过无法设置成壁纸的图片
-    # MOD: 前一张和后一张可能出错 -> 索引位置未对齐
 
     def copyimg(self,):
         """复制移动当前壁纸到目标目录"""
@@ -218,7 +204,6 @@ class Wallpapers:
 
     def saveconfig(self,):
         """存储配置信息并退出"""
-        # config_path = getConfigpath()
 
         config = {
             'path_1': self.ptpath,
@@ -232,8 +217,6 @@ class Wallpapers:
 
         window.quit()
 
-
-# killConsole()
 
 window = tk.Tk()
 window.title("Wallpaper Filter")
